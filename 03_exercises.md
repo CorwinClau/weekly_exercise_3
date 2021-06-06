@@ -3,6 +3,7 @@ title: 'Weekly Exercises #3'
 author: "Xintan Xia"
 output: 
   html_document:
+    theme: journal
     keep_md: TRUE
     toc: TRUE
     toc_float: TRUE
@@ -282,13 +283,16 @@ It's natural to expect that bikes are rented more at some times of day, some day
 ```r
 Trips %>%
   ggplot(aes(x = sdate)) +
-  geom_density() +
+  geom_density(fill = "lightblue", color = NA, alpha = .6) +
   labs(x = "",
        y = "",
        title = "Density estimate of bike-renting events' distribution by time")
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+  
+  There is not much information from this graph. In general, the density of events is higher in October than in other months, and decreases sharply starting from late October to late November. This indicates that the frequency of bike-renting events was much higher throughout most of the time in October 2014, and then, by November, people seemed less inclined to rent bikes.  
+  The density rebounds in late November and continues increasing until mid-December, which means that bike-renting events happened more and more frequently starting from late November, 2014 until mid-December, 2014, out of unknown reasons. Yet the maximum density here is far less than that in October, and this trend did not last long: People's inclination to rent bikes seemed to decrease again by mid-December and reached its minimum at the end of December.
   
   8. A density plot of the events versus time of day.  You can use `mutate()` with `lubridate`'s  `hour()` and `minute()` functions to extract the hour of the day and minute within the hour from `sdate`. Hint: A minute is 1/60 of an hour, so create a variable where 3:30 is 3.5 and 3:45 is 3.75.
   
@@ -299,13 +303,15 @@ Trips %>%
          minute = minute(sdate), 
          time_of_day = round(hour + minute/60, 2)) %>%
   ggplot(aes(x = time_of_day)) +
-  geom_density(fill = "lightblue", color = "lightblue", alpha = 0.6) +
+  geom_density(fill = "lightblue", color = NA, alpha = 0.6) +
   labs(x = "",
        y = "",
        title = "Density Estimate of the Events' Distribution by Time of Day")
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+  
+  We can observe that the plot is a bit left skewed, with a center at around 12.5 (12:30pm), and is clearly in a bimodal pattern. This means that in late 2014, there were people who rented bikes late at night, and in general, the frequency of renting bikes reaches its highest point either at around 8 (8am) or around 17.5 (17:30), though the events tended to happen more frequently at around 17:30 than at about 8am.  
   
   9. A bar graph of the events versus day of the week. Put day on the y-axis.
   
@@ -322,6 +328,9 @@ Trips %>%
 
 ![](03_exercises_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
   
+  The frequency of the events didn't vary much in different days of the week, according to the plot, but it's still obvious that in the last quarter of 2014, more bike-renting events happened on Friday than all other days, and the total number of times the events happening is the least for Saturday and Sunday.  
+  Yet this doesn't mean that people were inclined more to rent a bike on Friday than other weekdays, for each arbitrary week, during that period of time. It's possible that the events of bike-renting happened, with an anomalously high frequency, on one or several Fridays.  
+  
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
 
@@ -332,7 +341,7 @@ Trips %>%
          time_of_day = round(hour + minute/60, 2),
          week_day = wday(sdate, label = TRUE)) %>%
   ggplot(aes(x = time_of_day)) +
-  geom_density(fill = "lightblue", color = "lightblue", alpha = 0.6) +
+  geom_density(fill = "lightblue", color = NA, alpha = 0.6) +
   facet_wrap(vars(week_day), nrow = 1) +
   labs(x = "",
        y = "",
@@ -340,6 +349,8 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+  
+  Yes, there seems to be a pattern. The density estimates of the distribution of events in weekdays (Monday to Friday) are in a similar bimodal pattern, with one maximum at around 8am and the other at approximately 17:30pm. The density plots for Sunday and Saturday also share a similar pattern: The density (frequency of events) increases until 1am, reaches its lowest level at 5am, then increases drastically and reaches its highest point between 12:30pm and 15:00, and decreases monotonously until 24:00. The pattern shared by weekdays might be attributed to commuting, while it's hard to appropriately elucidate the pattern shared by weekends.
   
 The variable `client` describes whether the renter is a regular user (level `Registered`) or has not joined the bike-rental organization (`Causal`). The next set of exercises investigate whether these two different categories of users show different rental behavior and how `client` interacts with the patterns you found in the previous exercises. 
 
@@ -361,6 +372,8 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+  
+  From this plot, we can see that casual and regular users shared a similar rental behavior pattern during the weekend, but they clearly had different rental behavior patterns during weekdays. In general, registered users followed the bimodal pattern during weekdays, yet casual renters seemed to prefer to rent bikes the most at only around 15:00, except Mondays, when they tended to choose to rent earlier.
 
   12. Change the previous graph by adding the argument `position = position_stack()` to `geom_density()`. In your opinion, is this better or worse in terms of telling a story? What are the advantages/disadvantages of each?
   
@@ -383,6 +396,9 @@ Trips %>%
 
 ![](03_exercises_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
   
+  In terms of displaying rental behavior patterns and comparing them between casual and registered users, this stack position may render it worse in telling stories. Density plots for casual users don't build up from level axes, due to the stack position, and this may lead to the situation that people misinterpret the overall density, which is outlined as the reddish color, as the density for renting events by casual users. For example, it may be the case that people will naturally interpret the renting behaviors, on Monday, of both types of users as fitting in a bimodal pattern. This position visually obscures both the behavior pattern of casual users and the key difference between clients, to some degree.  
+  Yet this position makes it easier to have a general concept of proportions. This position allows us to better examine the proportion of each type of users' renting frequency to the total frequency.
+  
   13. In this graph, go back to using the regular density plot (without `position = position_stack()`). Add a new variable to the dataset called `weekend` which will be "weekend" if the day is Saturday or Sunday and  "weekday" otherwise (HINT: use the `ifelse()` function and the `wday()` function from `lubridate`). Then, update the graph from the previous problem by faceting on the new `weekend` variable. 
   
 
@@ -404,9 +420,32 @@ Trips %>%
 
 ![](03_exercises_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
   
+  This graph somehow corroborates interpretations before, showing that casual and registered clients shared a similar renting behavior in weekend and had distinct behaviors in weekdays.
+  
   14. Change the graph from the previous problem to facet on `client` and fill with `weekday`. What information does this graph tell you that the previous didn't? Is one graph better than the other?
   
 
+```r
+Trips %>%
+  mutate(hour = hour(sdate), 
+         minute = minute(sdate), 
+         time_of_day = round(hour + minute/60, 2),
+         week_day = wday(sdate),
+         weekend = ifelse(near(week_day, 7) | near(week_day, 1), "weekend", "weekday")) %>%
+  ggplot(aes(x = time_of_day, fill = weekend)) +
+  geom_density(alpha = .5, 
+               color = NA) +
+  facet_wrap(vars(client), nrow = 1) +
+  labs(x = "",
+       y = "",
+       title = "Density Estimate of the Events' Distribution by Time of Day") +
+  theme(legend.position = "bottom", legend.title = element_blank())
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+  
+  While the previous graph emphasizes the comparison between different kinds of clients' rental behaviors, during weekdays and the weekend, this graph highlights the inner behavioral difference of each type of clients. The story here is that casual users seemed to have similar behaviors regardless of weekday, but regular users had much different behaviors during weekdays from behaviors on the weekend.  
+  If we want to focus on the difference between the rental behaviors between two clients' types, than it might be better to consider the previous graph, instead of this one.
   
 ### Spatial patterns
 
