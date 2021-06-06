@@ -1,6 +1,6 @@
 ---
 title: 'Weekly Exercises #3'
-author: "Put your name here"
+author: "Xintan Xia"
 output: 
   html_document:
     keep_md: TRUE
@@ -169,9 +169,10 @@ garden_harvest %>%
 </div>
   
   For some vegetable varieties, there are multiple plots recorded for a single variety, and that's why the number of rows increases after using the `left_join()`. This may be quite misleading. Take the Bush Bush Slender beans as an example. People might think that the total harvest of the variety is exactly the same in plot M and D, and that Lisa harvest around 22.13lb of beans at each plot. Yet that is not the case, and the problem is that there is no plot information in the garden harvest data.  
-  It's hard to find out a way to fix it.. Maybe the only way to fix it would be keep track of at which plot was the beans harvested in the past.
+  It's hard to find out a way to fix it.. Maybe the only way would be keeping track of at which plot were the beans harvested in the past.
 
-  3. I would like to understand how much money I "saved" by gardening, for each vegetable type. Describe how I could use the `garden_harvest` and `garden_spending` datasets, along with data from somewhere like [this](https://products.wholefoodsmarket.com/search?sort=relevance&store=10542) to answer this question. You can answer this in words, referencing various join functions. You don't need R code but could provide some if it's helpful.
+  3. I would like to understand how much money I "saved" by gardening, for each vegetable type. Describe how I could use the `garden_harvest` and `garden_spending` datasets, along with data from somewhere like [this](https://products.wholefoodsmarket.com/search?sort=relevance&store=10542) to answer this question. You can answer this in words, referencing various join functions. You don't need R code but could provide some if it's helpful.  
+  > It'll be helpful to use the `left_join()` function, joining the costs from the `garden_spending`, together with the prices of vegetables in the whole foods market, to the `garden_harvest` dataset. Then we can `mutate` a new variable calculating the "revenue" from vegetables planted by multiplying the price from the whole foods market website and the weight of each vagetable variety. The amount of money "saved" can be finally calculated by subtracting cost from the revenue.
 
   4. Subset the data to tomatoes. Reorder the tomato varieties from smallest to largest first harvest date. Create a barplot of total harvest in pounds for each variety, in the new order.
 
@@ -278,32 +279,130 @@ It's natural to expect that bikes are rented more at some times of day, some day
   7. A density plot, which is a smoothed out histogram, of the events versus `sdate`. Use `geom_density()`.
   
 
+```r
+Trips %>%
+  ggplot(aes(x = sdate)) +
+  geom_density() +
+  labs(x = "",
+       y = "",
+       title = "Density estimate of bike-renting events' distribution by time")
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
   
   8. A density plot of the events versus time of day.  You can use `mutate()` with `lubridate`'s  `hour()` and `minute()` functions to extract the hour of the day and minute within the hour from `sdate`. Hint: A minute is 1/60 of an hour, so create a variable where 3:30 is 3.5 and 3:45 is 3.75.
   
 
+```r
+Trips %>%
+  mutate(hour = hour(sdate), 
+         minute = minute(sdate), 
+         time_of_day = round(hour + minute/60, 2)) %>%
+  ggplot(aes(x = time_of_day)) +
+  geom_density(fill = "lightblue", color = "lightblue", alpha = 0.6) +
+  labs(x = "",
+       y = "",
+       title = "Density Estimate of the Events' Distribution by Time of Day")
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
   
   9. A bar graph of the events versus day of the week. Put day on the y-axis.
   
 
+```r
+Trips %>%
+  mutate(week_day = wday(sdate, label = TRUE)) %>%
+  ggplot(aes(y = fct_rev(fct_infreq(week_day)))) +
+  geom_bar(fill = "cadetblue4") +
+  labs(x = "",
+       y = "",
+       title = "Frequency of bike-renting events by weekday")
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
   
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
 
+```r
+Trips %>%
+  mutate(hour = hour(sdate), 
+         minute = minute(sdate), 
+         time_of_day = round(hour + minute/60, 2),
+         week_day = wday(sdate, label = TRUE)) %>%
+  ggplot(aes(x = time_of_day)) +
+  geom_density(fill = "lightblue", color = "lightblue", alpha = 0.6) +
+  facet_wrap(vars(week_day), nrow = 1) +
+  labs(x = "",
+       y = "",
+       title = "Density Estimate of the Events' Distribution by Time of Day")
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
   
 The variable `client` describes whether the renter is a regular user (level `Registered`) or has not joined the bike-rental organization (`Causal`). The next set of exercises investigate whether these two different categories of users show different rental behavior and how `client` interacts with the patterns you found in the previous exercises. 
 
   11. Change the graph from exercise 10 to set the `fill` aesthetic for `geom_density()` to the `client` variable. You should also set `alpha = .5` for transparency and `color=NA` to suppress the outline of the density function.
   
 
+```r
+Trips %>%
+  mutate(hour = hour(sdate), 
+         minute = minute(sdate), 
+         time_of_day = round(hour + minute/60, 2),
+         week_day = wday(sdate, label = TRUE)) %>%
+  ggplot(aes(x = time_of_day, fill = client)) +
+  geom_density(alpha = .5, color = NA) +
+  facet_wrap(vars(week_day), nrow = 1) +
+  labs(x = "",
+       y = "",
+       title = "Density Estimate of the Events' Distribution by Time of Day")
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
   12. Change the previous graph by adding the argument `position = position_stack()` to `geom_density()`. In your opinion, is this better or worse in terms of telling a story? What are the advantages/disadvantages of each?
   
 
+```r
+Trips %>%
+  mutate(hour = hour(sdate), 
+         minute = minute(sdate), 
+         time_of_day = round(hour + minute/60, 2),
+         week_day = wday(sdate, label = TRUE)) %>%
+  ggplot(aes(x = time_of_day, fill = client)) +
+  geom_density(alpha = .5, 
+               color = NA,
+               position = position_stack()) +
+  facet_wrap(vars(week_day), nrow = 1) +
+  labs(x = "",
+       y = "",
+       title = "Density Estimate of the Events' Distribution by Time of Day")
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
   
   13. In this graph, go back to using the regular density plot (without `position = position_stack()`). Add a new variable to the dataset called `weekend` which will be "weekend" if the day is Saturday or Sunday and  "weekday" otherwise (HINT: use the `ifelse()` function and the `wday()` function from `lubridate`). Then, update the graph from the previous problem by faceting on the new `weekend` variable. 
   
 
+```r
+Trips %>%
+  mutate(hour = hour(sdate), 
+         minute = minute(sdate), 
+         time_of_day = round(hour + minute/60, 2),
+         week_day = wday(sdate),
+         weekend = ifelse(near(week_day, 7) | near(week_day, 1), "weekend", "weekday")) %>%
+  ggplot(aes(x = time_of_day, fill = client)) +
+  geom_density(alpha = .5, 
+               color = NA) +
+  facet_wrap(vars(weekend), nrow = 1) +
+  labs(x = "",
+       y = "",
+       title = "Density Estimate of the Events' Distribution by Time of Day")
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
   
   14. Change the graph from the previous problem to facet on `client` and fill with `weekday`. What information does this graph tell you that the previous didn't? Is one graph better than the other?
   
