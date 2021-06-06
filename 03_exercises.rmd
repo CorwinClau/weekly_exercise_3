@@ -175,11 +175,14 @@ It's natural to expect that bikes are rented more at some times of day, some day
 ```{r}
 Trips %>%
   ggplot(aes(x = sdate)) +
-  geom_density() +
+  geom_density(fill = "lightblue", color = NA, alpha = .6) +
   labs(x = "",
        y = "",
        title = "Density estimate of bike-renting events' distribution by time")
 ```
+  
+  There is not much information from this graph. In general, the density of events is higher in October than in other months, and decreases sharply starting from late October to late November. This indicates that the frequency of bike-renting events was much higher throughout most of the time in October 2014, and then, by November, people seemed less inclined to rent bikes.  
+  The density rebounds in late November and continues increasing until mid-December, which means that bike-renting events happened more and more frequently starting from late November, 2014 until mid-December, 2014, out of unknown reasons. Yet the maximum density here is far less than that in October, and this trend did not last long: People's inclination to rent bikes seemed to decrease again by mid-December and reached its minimum at the end of December.
   
   8. A density plot of the events versus time of day.  You can use `mutate()` with `lubridate`'s  `hour()` and `minute()` functions to extract the hour of the day and minute within the hour from `sdate`. Hint: A minute is 1/60 of an hour, so create a variable where 3:30 is 3.5 and 3:45 is 3.75.
   
@@ -189,11 +192,13 @@ Trips %>%
          minute = minute(sdate), 
          time_of_day = round(hour + minute/60, 2)) %>%
   ggplot(aes(x = time_of_day)) +
-  geom_density(fill = "lightblue", color = "lightblue", alpha = 0.6) +
+  geom_density(fill = "lightblue", color = NA, alpha = 0.6) +
   labs(x = "",
        y = "",
        title = "Density Estimate of the Events' Distribution by Time of Day")
 ```
+  
+  We can observe that the plot is a bit left skewed, with a center at around 11.5 (11:30am), and is clearly in a bimodal pattern. This means that in late 2014, there were people who rented bikes late at night, and in general, the frequency of renting bikes reaches its highest point either at around 8am or around 17:30pm, though the events tended to happen more frequently at around 17:30pm than at about 8am.  
   
   9. A bar graph of the events versus day of the week. Put day on the y-axis.
   
@@ -206,6 +211,9 @@ Trips %>%
        y = "",
        title = "Frequency of bike-renting events by weekday")
 ```
+  
+  The frequency of the events didn't vary much in different days of the week, according to the plot, but it's still obvious that in the last quarter of 2014, more bike-renting events happened on Friday than all other weekdays, and the total number of times the events happening is the least for Saturday and Sunday.  
+  Yet this doesn't mean that people were inclined more to rent a bike on Friday than other weekdays, for each arbitrary week, during that period of time. It's possible that the events of bike-renting happened, with an anomalously high frequency, on one or several Fridays.  
   
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
