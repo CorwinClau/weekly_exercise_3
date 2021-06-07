@@ -189,7 +189,8 @@ garden_harvest %>%
   labs(x = "",
        y = "",
        title = "Total harvest (lb) for each tomato variety",
-       caption = "From the smallest first harvest date (grape) to the largest (volunteers)")
+       subtitle = "Ordered by the first harvest date") +
+  theme(plot.title = element_text(face = "bold"))
 ```
 
 ```
@@ -452,10 +453,50 @@ Trips %>%
   15. Use the latitude and longitude variables in `Stations` to make a visualization of the total number of departures from each station in the `Trips` data. Use either color or size to show the variation in number of departures. We will improve this plot next week when we learn about maps!
   
 
+```r
+Num_of_departure <- Trips %>%
+  group_by(sstation) %>%
+  count()
+
+Num_of_departure %>%
+  left_join(Stations %>% select(name, lat, long),
+            by = c("sstation" = "name")) %>%
+  ggplot(aes(x = lat, y = long, color = n)) +
+  geom_point() +
+  labs(x = "latitude",
+       y = "longitude",
+       title = "Number of departures by geographic location") 
+```
+
+```
+## Warning: Removed 11 rows containing missing values (geom_point).
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
   
   16. Only 14.4% of the trips in our data are carried out by casual users. Create a plot that shows which area(s) have stations with a much higher percentage of departures by casual users. What patterns do you notice? (Again, we'll improve this next week when we learn about maps).
   
 
+```r
+Trips %>%
+  select(sstation, client) %>% 
+  left_join(Stations %>% select(name, lat, long),
+            by = c("sstation" = "name")) %>%
+  ggplot(aes(x = lat, y = long, color = client)) +
+  geom_point(alpha = 0.3, size = 1.2) +
+  labs(x = "latitude",
+       y = "longitude",
+       title = "Depatures by two types of users",
+       subtitle = "By geographic location")
+```
+
+```
+## Warning: Removed 183 rows containing missing values (geom_point).
+```
+
+![](03_exercises_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+  
+  We may notice from the plot that casual users seemed to concentrate the most in areas with a latitude between 38.87 and 38.9, and a longitude between around -77.05 and -77.0.
   
 ### Spatiotemporal patterns
 
