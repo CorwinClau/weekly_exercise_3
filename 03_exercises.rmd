@@ -183,6 +183,7 @@ Trips %>%
        title = "Density estimate of bike-renting events' distribution by time")
 ```
   
+  **Note**: All the following interpretations may not perfectly match the plot above, because I wrote them before accessing the full dataset.  
   There is not much information from this graph. In general, the density of events is higher in October than in other months, and decreases sharply starting from late October to late November. This indicates that the frequency of bike-renting events was much higher throughout most of the time in October 2014, and then, by November, people seemed less inclined to rent bikes.  
   The density rebounds in late November and continues increasing until mid-December, which means that bike-renting events happened more and more frequently starting from late November, 2014 until mid-December, 2014, out of unknown reasons. Yet the maximum density here is far less than that in October, and this trend did not last long: People's inclination to rent bikes seemed to decrease again by mid-December and reached its minimum at the end of December.
   
@@ -389,9 +390,14 @@ Trips %>%
             by = c("sstation" = "sstation", "date" = "date")) %>%
   select(!date) %>%
   group_by(client, week_day) %>%
-  summarize(num = n()) %>%
-  mutate(prop = num/sum(num))
+  summarize(num_of_trips = n()) %>%
+  mutate(prop = num_of_trips/sum(num_of_trips)) %>%
+  select(!num_of_trips) %>%
+  pivot_wider(names_from = client,
+              values_from = prop)
 ```
+  
+  It can be seen that casual users intended to rent bikes the most on Saturday for trips whose departures match the top ten station-date combinations, and they preferred the least to implement renting behaviors on Wednesday. For registered users, they rented more on Wednesdays and Thursdays and the least on the weekend.
   
 
 **DID YOU REMEMBER TO GO BACK AND CHANGE THIS SET OF EXERCISES TO THE LARGER DATASET? IF NOT, DO THAT NOW.**
