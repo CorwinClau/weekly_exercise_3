@@ -414,7 +414,17 @@ This problem uses the data from the Tidy Tuesday competition this week, `kids`. 
   21. In this exercise, you are going to try to replicate the graph below, created by Georgios Karamanis. I'm sure you can find the exact code on GitHub somewhere, but **DON'T DO THAT!** You will only be graded for putting an effort into this problem. So, give it a try and see how far you can get without doing too much googling. HINT: use `facet_geo()`. The graphic won't load below since it came from a location on my computer. So, you'll have to reference the original html on the moodle page to see it.
   
 ```{r}
-
+kids %>%
+  filter(variable == "lib", near(year, 1997) | near(year, 2016)) %>%
+  mutate(per_child_dollars = inf_adj_perchild * 1000) %>%
+  ggplot(aes(x = year, y = per_child_dollars)) +
+  geom_line(size = 0.5) +
+  facet_geo(~state) +
+  labs(x = "",
+       y = "",
+       title = "Change in public spending on libraries from 1997 to 2016",
+       subtitle = "Thousands of dollars spent per child, adjusted for inflation",
+       caption = "Source: Urban Institute")
 ```
 
 
