@@ -13,16 +13,16 @@ output:
 
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
 ```
 
 ```{r libraries}
-library(tidyverse)     # for graphing and data cleaning
-library(gardenR)       # for Lisa's garden data
-library(lubridate)     # for date manipulation
-library(ggthemes)      # for even more plotting themes
-library(geofacet)      # for special faceting with US map layout
-theme_set(theme_minimal())       # My favorite ggplot() theme :)
+library(tidyverse)   
+library(gardenR)     
+library(lubridate)    
+library(ggthemes)   
+library(geofacet)  
+theme_set(theme_minimal())    
 ```
 
 ```{r data}
@@ -161,7 +161,7 @@ Here is the code to read in the data. We do this a little differently than usual
 
 ```{r cache=TRUE}
 data_site <- 
-  "https://www.macalester.edu/~dshuman1/data/112/2014-Q4-Trips-History-Data-Small.rds" 
+  "https://www.macalester.edu/~dshuman1/data/112/2014-Q4-Trips-History-Data.rds" 
 Trips <- readRDS(gzcon(url(data_site)))
 Stations<-read_csv("http://www.macalester.edu/~dshuman1/data/112/DC-Stations.csv")
 ```
@@ -183,7 +183,8 @@ Trips %>%
        title = "Density estimate of bike-renting events' distribution by time")
 ```
   
-  **Note**: All the following interpretations may not perfectly match the plot above, because I wrote them before accessing the full dataset.  
+  **Note**: *All the following interpretations may not perfectly match the corresponding plots (or tables), because I wrote them before accessing the full dataset.*  
+  
   There is not much information from this graph. In general, the density of events is higher in October than in other months, and decreases sharply starting from late October to late November. This indicates that the frequency of bike-renting events was much higher throughout most of the time in October 2014, and then, by November, people seemed less inclined to rent bikes.  
   The density rebounds in late November and continues increasing until mid-December, which means that bike-renting events happened more and more frequently starting from late November, 2014 until mid-December, 2014, out of unknown reasons. Yet the maximum density here is far less than that in October, and this trend did not last long: People's inclination to rent bikes seemed to decrease again by mid-December and reached its minimum at the end of December.
   
@@ -400,8 +401,6 @@ Trips %>%
   It can be seen that casual users intended to rent bikes the most on Saturday for trips whose departures match the top ten station-date combinations, and they preferred the least to implement renting behaviors on Wednesday. For registered users, they rented more on Wednesdays and Thursdays and the least on the weekend.
   
 
-**DID YOU REMEMBER TO GO BACK AND CHANGE THIS SET OF EXERCISES TO THE LARGER DATASET? IF NOT, DO THAT NOW.**
-
 ## GitHub link
 
   20. Below, provide a link to your GitHub page with this set of Weekly Exercises. Specifically, if the name of the file is 03_exercises.Rmd, provide a link to the 03_exercises.md file, which is the one that will be most readable on GitHub.  
@@ -418,7 +417,7 @@ kids %>%
   filter(variable == "lib", near(year, 1997) | near(year, 2016)) %>%
   mutate(per_child_dollars = inf_adj_perchild * 1000) %>%
   ggplot(aes(x = year, y = per_child_dollars)) +
-  geom_line(color = "white", size = 0.5) +
+  geom_line(arrow = arrow(length = unit(0.25, "cm")), color = "white") +
   facet_geo(~state) +
   labs(x = "",
        y = "",
@@ -433,5 +432,3 @@ kids %>%
         strip.text = element_text(color = "white", face = "bold"))
 ```
 
-
-**DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
