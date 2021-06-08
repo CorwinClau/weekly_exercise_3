@@ -418,13 +418,19 @@ kids %>%
   filter(variable == "lib", near(year, 1997) | near(year, 2016)) %>%
   mutate(per_child_dollars = inf_adj_perchild * 1000) %>%
   ggplot(aes(x = year, y = per_child_dollars)) +
-  geom_line(size = 0.5) +
+  geom_line(color = "white", size = 0.5) +
   facet_geo(~state) +
   labs(x = "",
        y = "",
        title = "Change in public spending on libraries from 1997 to 2016",
        subtitle = "Thousands of dollars spent per child, adjusted for inflation",
-       caption = "Source: Urban Institute")
+       caption = "Source: Urban Institute") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, ),
+        plot.background = element_rect(fill = "slategray3",
+                                       color = NA),
+        strip.text = element_text(color = "white", face = "bold"))
 ```
 
 
